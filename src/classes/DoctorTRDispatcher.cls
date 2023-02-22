@@ -38,8 +38,6 @@ public with sharing class DoctorTRDispatcher {
         );
 
         for(Contact doctor : newDoctors){
-            System.debug('facilitiesWithBestDoctorsMap' + facilitiesWithBestDoctorsMap);
-            System.debug('doctor' + doctor.getErrors());
             if(!facilitiesWithBestDoctorsMap?.get(doctor.AccountId)?.Contacts.isEmpty()
                 && doctor.PaymentsAmount__c > facilitiesWithBestDoctorsMap?.get(doctor.AccountId)?.Contacts[0]?.PaymentsAmount__c){
 

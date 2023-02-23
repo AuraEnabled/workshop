@@ -12,7 +12,9 @@ public with sharing class DoctorTRHandler {
             }
             when BEFORE_UPDATE {
                 System.debug('BEFORE_UPDATE');
-                DoctorTRDispatcher.defineNewBestDoctorInFacility(newList, oldMap);
+                if(!System.isBatch()){
+                    DoctorTRDispatcher.defineNewBestDoctorInFacility(newList, oldMap);
+                }
             }
             when AFTER_INSERT {
                 System.debug('AFTER_INSERT');

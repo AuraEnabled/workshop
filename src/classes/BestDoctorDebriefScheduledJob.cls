@@ -20,6 +20,7 @@ global with sharing class BestDoctorDebriefScheduledJob implements Schedulable {
         );
 
         insertTasksForBestDoctors(facilitiesWithBestDoctorsMap);
+        Database.executeBatch(new BestDoctorDebriefBatchJob());
     }
 
     private void insertTasksForBestDoctors(Map<Id, Account> facilitiesWithBestDoctorsMap) {

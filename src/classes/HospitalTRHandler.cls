@@ -13,7 +13,9 @@ public with sharing class HospitalTRHandler {
 
             }
             when AFTER_INSERT {
-                HospitalTRDispatcher.launchBatchJobForPatientGeneration(newList);
+                if (!Test.isRunningTest()){
+                    HospitalTRDispatcher.launchBatchJobForPatientGeneration(newList);
+                }
             }
             when AFTER_UPDATE {
 

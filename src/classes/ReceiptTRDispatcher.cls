@@ -81,5 +81,36 @@ public with sharing class ReceiptTRDispatcher {
             update doctorListForUpdate;
         }
     }
+
+    public static void checkInsuranceCoverage(List<Receipt__c> newList) {
+
+        List<Insurance__c> insuranceListForUpdate = new List<Insurance__c>();
+        Map<Id, Receipt__c> receiptMap = new Map<Id, Receipt__c>(newList);
+        Map<Id, Receipt__c> receiptsWithAdditionalObjectFields = new Map<Id, Receipt__c>(
+                [SELECT Id, Amount__c, Insurance__c, Insurance__r.Amount__c, Insurance__r.CoveredAmount__c
+                FROM Receipt__c
+                WHERE Id IN :receiptMap.keySet()
+                ]
+        );
+
+        for (Id receiptId : receiptsWithAdditionalObjectFields.keySet()){
+            Insurance__c insurance = new Insurance__c();
+            insurance.Id = receiptsWithAdditionalObjectFields.get(receiptId).Insurance__c;
+            insurance.Amount__c = receiptsWithAdditionalObjectFields.get(receiptId).Insurance__r.Amount__c;
+            insurance.CoveredAmount__c =
+                    receiptsWithAdditionalObjectFields.get(receiptId).Insurance__r.CoveredAmount__c + receiptsWithAdditionalObjectFields.get(receiptId).Amount__c;
+
+
+            if(insurance.Amount__c - insurance.CoveredAmount__c < 0){
+
+                receiptMap.get(receiptId).addError(System.Label.InsuranceCoverageLimitReached);
+            }
+            else{
+                insuranceListForUpdate.add(insurance);
+            }
+        }
+
+        update insuranceListForUpdate;
+    }
 }
 

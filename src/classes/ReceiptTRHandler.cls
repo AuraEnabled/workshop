@@ -13,11 +13,11 @@ public with sharing class ReceiptTRHandler {
                 System.debug('BEFORE_UPDATE');
             }
             when AFTER_INSERT {
-                System.debug('AFTER_INSERT');
+                ReceiptTRDispatcher.checkInsuranceCoverage(newList);
                 ReceiptTRDispatcher.recalculateNetIncome(newList, null);
             }
             when AFTER_UPDATE {
-                System.debug('AFTER_UPDATE');
+                ReceiptTRDispatcher.checkInsuranceCoverage(newList);
                 ReceiptTRDispatcher.recalculateNetIncome(newList, oldMap);
 
             }

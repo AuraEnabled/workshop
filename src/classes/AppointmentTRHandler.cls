@@ -13,10 +13,12 @@ public with sharing class AppointmentTRHandler {
 
             }
             when AFTER_INSERT {
-                AppointmentTRDispatcher.validateHospitalDepartment(newList, null);
+                AppointmentTRDispatcher.validateHospitalDepartment(newList);
+                AppointmentTRDispatcher.validateInsuranceDepartmentCoverage(newList);
             }
             when AFTER_UPDATE {
-                AppointmentTRDispatcher.validateHospitalDepartment(newList, oldMap);
+                AppointmentTRDispatcher.validateHospitalDepartment(newList);
+                AppointmentTRDispatcher.validateInsuranceDepartmentCoverage(newList);
             }
             when else {
             }

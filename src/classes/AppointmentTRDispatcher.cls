@@ -9,10 +9,9 @@ public with sharing class AppointmentTRDispatcher {
     private static final String CHILDREN = 'Children';
     private static final String PSYCHO = 'Psychiatric';
 
+    public static void validateHospitalDepartment(List<Case> newList){
 
-    public static void validateHospitalDepartment(List<Case> newList, Map<Id, Case> oldMap){
         Map<Id, Case> newMap = new Map<Id, Case>(newList);
-
         Map<Id, Case> caseMapWithRelatedObjects = new Map<Id, Case>([
                 SELECT Id,
                         Account.DepartmentType__c, Account.Department__c,
@@ -33,6 +32,25 @@ public with sharing class AppointmentTRDispatcher {
 
                     newMap.get(appointment.Id).addError(System.Label.AgeAndDeptNotMatched);
                 }
+            }
+        }
+    }
+
+    public static void validateInsuranceDepartmentCoverage(List<Case> newList){
+
+        Map<Id, Case> newMap = new Map<Id, Case>(newList);
+        Map<Id, Case> caseMapWithRelatedObjects = new Map<Id, Case>([
+                SELECT Id,
+                        Account.Department__c,
+                        Insurance__r.CoveredDepartments__c
+                FROM Case WHERE Id IN :newMap.keySet()
+        ]);
+
+        for (Case appointment : caseMapWithRelatedObjects.values()) {
+            List<String> coveredDepartments = appointment.Insurance__r.CoveredDepartments__c?.split(';');
+
+            if(!coveredDepartments.contains(appointment.Account.Department__c)) {
+                newMap.get(appointment.Id).addError(System.Label.InsuranceDeptCoverageMisuse);
             }
         }
     }

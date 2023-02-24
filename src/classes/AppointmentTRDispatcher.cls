@@ -1,0 +1,39 @@
+/**
+ * Created by bell on 24.02.2023.
+ */
+
+public with sharing class AppointmentTRDispatcher {
+
+    private static final Integer maturityDelimiter = 16;
+    private static final String ADULT = 'Adult';
+    private static final String CHILDREN = 'Children';
+    private static final String PSYCHO = 'Psychiatric';
+
+
+    public static void validateHospitalDepartment(List<Case> newList, Map<Id, Case> oldMap){
+        Map<Id, Case> newMap = new Map<Id, Case>(newList);
+
+        Map<Id, Case> caseMapWithRelatedObjects = new Map<Id, Case>([
+                SELECT Id,
+                        Account.DepartmentType__c, Account.Department__c,
+                        Patient__r.Age__c
+                FROM Case WHERE Id IN :newMap.keySet()
+        ]);
+
+        for(Case appointment : caseMapWithRelatedObjects.values()){
+            if (appointment.Patient__r.Age__c < maturityDelimiter){
+                if (!appointment.Account.DepartmentType__c.equals(CHILDREN)
+                        ||appointment.Account.Department__c.equals(PSYCHO)){
+
+                    newMap.get(appointment.Id).addError(System.Label.AgeAndDeptNotMatched);
+                }
+            }
+            else {
+                if (!appointment.Account.DepartmentType__c.equals(ADULT)){
+
+                    newMap.get(appointment.Id).addError(System.Label.AgeAndDeptNotMatched);
+                }
+            }
+        }
+    }
+}

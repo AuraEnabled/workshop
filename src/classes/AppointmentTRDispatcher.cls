@@ -54,4 +54,16 @@ public with sharing class AppointmentTRDispatcher {
             }
         }
     }
+
+    public static void checkInsuranceFlagAndRelationMatch(List<Case> newList){
+
+        for(Case appointment : newList){
+            if(appointment.ByInsurance__c && String.isBlank(appointment.Insurance__c)){
+                appointment.Insurance__c.addError('Please choose an insurance');
+            }
+            else if(!appointment.ByInsurance__c && !String.isBlank(appointment.Insurance__c)){
+                appointment.ByInsurance__c.addError('Please fill the checkbox');
+            }
+        }
+    }
 }

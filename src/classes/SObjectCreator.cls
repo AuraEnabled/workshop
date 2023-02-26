@@ -80,4 +80,26 @@ public class SObjectCreator {
         return appointment;
     }
 
+    public static Case createAppointment(Id insuranceId, Id doctorId, Id departmentId, Id patientId, Boolean byInsurance){
+        Case appointment = new Case();
+        appointment.Status = STATUS_NEW;
+        appointment.Insurance__c = insuranceId;
+        appointment.ContactId = doctorId;
+        appointment.AccountId = departmentId;
+        appointment.Patient__c = patientId;
+        appointment.ByInsurance__c = byInsurance;
+
+        return appointment;
+    }
+
+    public static Receipt__c createReceipt(Decimal amount, Id insuranceId, Id patientId, Id appointmentId){
+        Receipt__c receipt = new Receipt__c();
+        receipt.Amount__c = amount;
+        receipt.Insurance__c = insuranceId;
+        receipt.Patient__c = patientId;
+        receipt.Appointment__c = appointmentId;
+
+        return receipt;
+    }
+
 }

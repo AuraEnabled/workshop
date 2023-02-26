@@ -7,7 +7,7 @@ public with sharing class AppointmentTRHandler {
 
         switch on triggerEvent {
             when BEFORE_INSERT {
-
+                AppointmentTRDispatcher.checkInsuranceFlagAndRelationMatch(newList);
             }
             when BEFORE_UPDATE {
 

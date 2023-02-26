@@ -1,7 +1,7 @@
 /**
  * Created by bell on 26.02.2023.
  */
-@IsTest
+
 public with sharing class GeneratePatientMock implements HttpCalloutMock {
 
     static String json2= '{\n' +

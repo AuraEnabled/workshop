@@ -1,7 +1,7 @@
 /**
  * Created by bell on 26.02.2023.
  */
-@IsTest
+
 public class PrivatbankExchangeRateMock implements HttpCalloutMock{
 
     public HttpResponse respond(HttpRequest request){

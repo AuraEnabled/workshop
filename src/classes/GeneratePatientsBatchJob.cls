@@ -5,9 +5,9 @@
 
 public with sharing class GeneratePatientsBatchJob implements Database.Batchable<Patient__c>, Database.AllowsCallouts {
 
+    private final String endPoint = 'https://randomuser.me/api/?results=1';
     private List<Account> accounts;
     private Integer numberOfPatientsToCreatePerHospital = 120;
-    private String endPoint = 'https://randomuser.me/api/?results=1';
 
     public GeneratePatientsBatchJob() {}
 
@@ -16,8 +16,8 @@ public with sharing class GeneratePatientsBatchJob implements Database.Batchable
     }
 
     public Iterable<Patient__c> start(Database.BatchableContext BC){
-
         List<Patient__c> patients = new List<Patient__c>();
+        numberOfPatientsToCreatePerHospital = Test.isRunningTest() ? 1 : numberOfPatientsToCreatePerHospital;
 
         for (Account hospital : accounts) {
             for (Integer i = 0; i < numberOfPatientsToCreatePerHospital; i++) {

@@ -12,7 +12,7 @@ global with sharing class BestDoctorDebriefScheduledJob implements Schedulable {
     global void execute(SchedulableContext schedulableContext){
 
         Map<Id, Account> facilitiesWithBestDoctorsMap = new Map<Id, Account>(
-                [SELECT Id, Name,
+                [SELECT Id, Name, DepartmentType__c, Department__c,
                     (SELECT Id, PaymentsAmount__c, BestDoctorOfMonth__c FROM Contacts
                     WHERE BestDoctorOfMonth__c = TRUE)
                 FROM Account
@@ -24,8 +24,8 @@ global with sharing class BestDoctorDebriefScheduledJob implements Schedulable {
     }
 
     private void insertTasksForBestDoctors(Map<Id, Account> facilitiesWithBestDoctorsMap) {
-
         List<Task> bestDoctorTasks = new List<Task>();
+        Map<Id, Double> facilityIdToBonusRate = mapFacilityIdToBonusRate(facilitiesWithBestDoctorsMap);
 
         for(Id facilityId : facilitiesWithBestDoctorsMap.keySet()){
             if(!facilitiesWithBestDoctorsMap.get(facilityId).Contacts.isEmpty()){
@@ -34,14 +34,26 @@ global with sharing class BestDoctorDebriefScheduledJob implements Schedulable {
                         Status = 'Completed',
                         WhoId = facilitiesWithBestDoctorsMap.get(facilityId).Contacts[0].Id,
                         Priority = 'Normal',
-                        Description = System.Label.BestDoctorTaskEntitlement
+                        Description = System.Label.BestDoctorTaskEntitlement,
+                        Bonus__c = facilitiesWithBestDoctorsMap.get(facilityId).Contacts[0].PaymentsAmount__c * facilityIdToBonusRate.get(facilityId)
                 );
 
                 bestDoctorTasks.add(task);
             }
-
-            insert bestDoctorTasks;
         }
+
+        insert bestDoctorTasks;
+    }
+
+    private Map<Id, Double> mapFacilityIdToBonusRate(Map<Id, Account> facilitiesWithBestDoctorsMap){
+        Map<Id, Double> facilityIdToBonusRate = new Map<Id, Double>();
+        Map<String, DepartmentSalaryBonusRate__mdt> bonusRateMap = DepartmentSalaryBonusRate__mdt.getAll();
+
+        for(Id facilityId : facilitiesWithBestDoctorsMap.keySet()){
+            String metadataMapKey = facilitiesWithBestDoctorsMap.get(facilityId).DepartmentType__c + facilitiesWithBestDoctorsMap.get(facilityId).Department__c;
+            facilityIdToBonusRate.put(facilityId, bonusRateMap.get(metadataMapKey).BonusRate__c);
+        }
+
+        return facilityIdToBonusRate;
     }
 }
-

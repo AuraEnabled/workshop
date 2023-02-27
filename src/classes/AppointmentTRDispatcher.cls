@@ -43,7 +43,7 @@ public with sharing class AppointmentTRDispatcher {
                 SELECT Id,
                         Account.Department__c,
                         Insurance__r.CoveredDepartments__c
-                FROM Case WHERE Id IN :newMap.keySet()
+                FROM Case WHERE Id IN :newMap.keySet() AND ByInsurance__c = TRUE
         ]);
 
         for (Case appointment : caseMapWithRelatedObjects.values()) {

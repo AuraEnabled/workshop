@@ -7,7 +7,6 @@ public with sharing class DoctorTRDispatcher {
     public static void defineNewBestDoctorInFacility(List<Contact> newList, Map<Id, Contact> oldMap) {
 
         List<Contact> newDoctors = new List<Contact>();
-        Map<Id, Contact> newMap = new Map<Id, Contact>();
         Set<Id> facilityIdsToCheckNewBestDoctor = new Set<Id>();
 
         for(Contact doctor : newList){
@@ -39,12 +38,12 @@ public with sharing class DoctorTRDispatcher {
 
         for(Contact doctor : newDoctors){
             if(!facilitiesWithBestDoctorsMap?.get(doctor.AccountId)?.Contacts.isEmpty()
-                && doctor.PaymentsAmount__c > facilitiesWithBestDoctorsMap?.get(doctor.AccountId)?.Contacts[0]?.PaymentsAmount__c){
+                && doctor.PaymentsAmount__c > facilitiesWithBestDoctorsMap?.get(doctor.AccountId)?.Contacts[0]?.PaymentsAmount__c
+                && !doctor.Id.equals(facilitiesWithBestDoctorsMap?.get(doctor.AccountId)?.Contacts[0].Id)){
 
                     doctor.BestDoctorOfMonth__c = true;
                     facilitiesWithBestDoctorsMap.get(doctor.AccountId).Contacts[0].BestDoctorOfMonth__c = false;
                     formerBestDoctorsForUpdate.add(facilitiesWithBestDoctorsMap.get(doctor.AccountId).Contacts[0]);
-
             }
         }
 

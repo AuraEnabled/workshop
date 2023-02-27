@@ -32,11 +32,33 @@ public class SObjectCreator {
         return hospital;
     }
 
+    public static Account createHospitalDepartment(String name, String department, String departmentType, Id parentAccount, Decimal facilityBonusTier){
+        Account hospital = new Account();
+        hospital.Name = name;
+        hospital.Department__c = department;
+        hospital.DepartmentType__c = departmentType;
+        hospital.RecordTypeId = HOSPITAL_DEPARTMENT_RECORD_TYPE_ID;
+        hospital.ParentId = parentAccount;
+        hospital.DoctorPaymentsToReceiveBonus__c = facilityBonusTier;
+
+        return hospital;
+    }
+
     public static Contact createDoctor(String firstName, String lastName, Id hospitalId){
         Contact doctor = new Contact();
         doctor.FirstName = firstName;
         doctor.LastName = lastName;
         doctor.AccountId = hospitalId;
+
+        return doctor;
+    }
+
+    public static Contact createDoctor(String firstName, String lastName, Id hospitalId, Decimal paymentsAmount){
+        Contact doctor = new Contact();
+        doctor.FirstName = firstName;
+        doctor.LastName = lastName;
+        doctor.AccountId = hospitalId;
+        doctor.PaymentsAmount__c = paymentsAmount;
 
         return doctor;
     }

@@ -95,8 +95,6 @@ public class AppointmentTRTest {
         Database.SaveResult result = Database.insert(appointment, false);
         Test.stopTest();
 
-        System.debug('###'+result);
-
         System.assert(result.getErrors().isEmpty());
 
     }
@@ -113,8 +111,6 @@ public class AppointmentTRTest {
         Test.startTest();
         Database.SaveResult result = Database.insert(appointment, false);
         Test.stopTest();
-
-        System.debug('###'+result);
 
         System.assert(!result.getErrors().isEmpty());
         System.assertEquals('The insurance doesn\'t cover this type of department', result.getErrors()[0].getMessage());
